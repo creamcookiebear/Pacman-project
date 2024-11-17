@@ -49,7 +49,7 @@ void initialize() {
 
 	//pacman.setIndexPosition(Map::width / 2, Map::hight / 2);
 	pacman.setIndexPosition(4, 4);
-	pacman.setVel(0.0f, 1.0f, 0.0f);
+	pacman.setVel(0.0f, 0.0f, 0.0f);
 	pacman.setMTL(mtlPac);
 
 	pacPos = pacman.getPos();

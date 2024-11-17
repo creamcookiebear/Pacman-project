@@ -219,9 +219,9 @@ void Map::draw() {
     for (int ym = 0; ym < Map::hight; ym++) {
         for (int xm = 0; xm < Map::width; xm++) {
             y = Map::hight-1 - ym; x = xm;
-            if (arrMap[y][x][0]) drawWall(Map::map2float(x, y)); // draw wall
-            else if (arrMap[y][x][1]) drawPellet(Map::map2float(x, y)); // draw pellet
-            else if (arrMap[y][x][2]) drawPower(Map::map2float(x, y)); // draw Power
+            if (arrMap[ym][xm][0]) drawWall(Map::map2float(x, y)); // draw wall
+            else if (arrMap[ym][xm][1]) drawPellet(Map::map2float(x, y)); // draw pellet
+            else if (arrMap[ym][xm][2]) drawPower(Map::map2float(x, y)); // draw Power
         }
     }
 }

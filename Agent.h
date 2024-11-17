@@ -32,6 +32,9 @@ protected:
 public:
 	static const int maxPowerTick = 100;
 	static Vector3f map2float(int, int);
+	static Vector3f map2float(std::array<int, 2> arr) {
+		return map2float(arr[0], arr[1]);
+	}
 	static std::array<int,2> float2map(Vector3f p);
 	static Vector3f direction2vec(DIRECTION);
 

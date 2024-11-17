@@ -1,5 +1,6 @@
 #include "Agent.h"
 #include <GL/freeglut.h>
+#include <math.h>
 //#include <FreeImage.h>
 
 Vector3f Agent::map2float(int x, int y) {
@@ -125,10 +126,14 @@ void Pacman::updateVel() {
 		}
 		std::cout << "flag: " << flag << std::endl;
 		if (flag) {// if next Velocity is legal move, update
+			std::cout << "Changed Vel" << std::endl;
 			vel = nextVel;
 			nextVel[0] = 0.f; nextVel[1] = 0.f;
 		}
 		return; // don't care of Vel before update.
+
+		std::cout << "discard nextVel. Illegal move";
+		std::cout << "\tat idxPos: " << idxPos[0] << ", " << idxPos[1] << std::endl;
 	}
 
 	// if Vel is not changed, Check if curr Vel is Valid
@@ -182,11 +187,11 @@ void Pacman::prevMoveHandler() {
 void Pacman::postMoveHandler() {
 	if (map.P(idxPos[0], idxPos[1])) {
 		point += 1;
-		map.sP(idxPos[0], MAP_HEIGHT - 1 - idxPos[1], false);
+		map.sP(idxPos[0], idxPos[1], false);
 	}
 	if (map.Pow(idxPos[0], idxPos[1])) { // Check if at PowerPellet
 		point += 1;
-		map.sPow(idxPos[0], MAP_HEIGHT - 1 - idxPos[1], false);
+		map.sPow(idxPos[0], idxPos[1], false);
 		bisPow = true;
 		::isPow = true; // set Global isPow = true
 		 
@@ -216,9 +221,15 @@ void Pacman::move() {
 	}
 	
 	pos[0] = pos[0] + vel[0]; pos[1] = pos[1] + vel[1];
-
+	/*
 	if (static_cast<int>((pos[0]) / BLOCK_SIZE) + MAP_WIDTH / 2 != idxPos[0] || \
 		static_cast<int>((pos[1]) / BLOCK_SIZE) + MAP_HEIGHT / 2 != idxPos[1]) {
+		bInxPosUpdated = true;
+		idxPos[0] = static_cast<int>((pos[0]) / BLOCK_SIZE) + MAP_WIDTH / 2;
+		idxPos[1] = static_cast<int>((pos[1]) / BLOCK_SIZE) + MAP_HEIGHT / 2;
+	}*/
+	if (abs(Agent::map2float(idxPos)[0] - pos[0]) >= BLOCK_SIZE || \
+		abs(Agent::map2float(idxPos)[1] - pos[1]) >= BLOCK_SIZE) {
 		bInxPosUpdated = true;
 		idxPos[0] = static_cast<int>((pos[0]) / BLOCK_SIZE) + MAP_WIDTH / 2;
 		idxPos[1] = static_cast<int>((pos[1]) / BLOCK_SIZE) + MAP_HEIGHT / 2;
