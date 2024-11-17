@@ -128,13 +128,54 @@ void display() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y, -100.0, 100.0);
-	//gluOrtho2D(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y);
+	bool orthogonalView = false;
+	bool tiltView = true;
+	if (orthogonalView) {
+		if (!tiltView) {
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y, -100.0, 100.0);
+			//gluOrtho2D(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+		}
+
+		else {
+			// Set up the orthogonal projection
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y, -100.0, 100.0);
+			// gluOrtho2D(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			// Apply a rotation of 15 degrees downward about the X-axis
+			glRotatef(-30.0, 1.0, 0.0, 0.0);
+		}
+	}
+	else {
+		// Set up the perspective projection
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45.0, (double)BOUNDARY_X / (double)BOUNDARY_Y*3, 0.1, BLOCK_SIZE*100.0);
+
+		// Switch to the modelview matrix and set the camera
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
+		// Position the camera
+		gluLookAt(
+			0.0, 0.0, BLOCK_SIZE*20.f,  // Camera position (x, y, z)
+			0.0, 0.0, 0.0,   // Look at point (center x, y, z)
+			0.0, 1.0, 0.0    // Up vector (x, y, z)
+		);
+
+		// Apply a rotation to tilt the view down 15 degrees
+		glRotatef(-30.0, 1.0, 0.0, 0.0);
+	}
+	
 
 	// Draw 2D
 	/* Implement: (1) draw map, and (2) draw student ID and name */
