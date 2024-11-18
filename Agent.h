@@ -85,10 +85,9 @@ protected:
 	DIRECTION getOppositeDirection(DIRECTION dir) const;
 	void prevMoveHandler() override;
 	void postMoveHandler() override;
-	Vector3f pastVel;
 public:
 	static const int maxActiveCnt;
-	static const int ghostActiveSec = 20;
+	static const int ghostActiveSec = 10;
 
 	Ghost();
 	Ghost(int x, int y, int z);

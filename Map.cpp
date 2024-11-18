@@ -64,14 +64,12 @@ Intersection Map::getClosestIntersection(const Vector3f& pos) const {
     return Intersection(std::array<int, 3>{{0, 0, 0}}, Intersection::STRAIGHT); // error case
 }
 
-Intersection& Map::getIntersection(const std::array<int, 3>& interPos) {
-    for (auto& intersection : intersections) {
-        if (intersection.getPosition() == interPos) {
-            return intersection;
-        }
+Intersection Map::getIntersection(const std::array<int, 3>& interPos) {
+    for (auto it = intersections.begin(); it != intersections.end(); it++) {
+        if (it->getPosition() == interPos) return *it;
     }
     std::cout << "No matching intersection.\nError case." << std::endl;
-    throw std::runtime_error("Intersection not found");
+    return Intersection(std::array <int, 3>{{0, 0, 0}}, Intersection::STRAIGHT); // error case
 }
 
 void Map::sP(int i, int j, bool val) { //set Pellet, single element
@@ -101,17 +99,18 @@ bool Map::Pow(Vector3i pos) const { //get Pellet by element, by Vec3i
 }
 
 void Map::generateIntersections() {
-    for (int y = 0; y < Map::hight; ++y) { // y ranges from 0 to hight - 1
-        for (int x = 0; x < Map::width; ++x) { // x ranges from 0 to width - 1
+    for (int y = 0; y < Map::hight; ++y) {// i, j is in Intercetion coord
+        for (int x = 0; x < Map::width; ++x) {
+            
 
-            if (arrMap[Map::hight - 1 - y][x][0]) continue; // Skip walls
+            if (arrMap[Map::hight-1-y][x][0]) continue; // Skip walls
 
             // Check neighboring cells
             int openPaths = 0;
             bool up = (y < Map::hight - 1 && !W(x, y + 1));
-            bool down = (y > 0 && !W(x, y - 1));
+            bool down = (y > 0 && !W(x, y-1));
             bool left = (x > 0 && !W(x - 1, y));
-            bool right = (x < Map::width - 1 && !W(x + 1, y));
+            bool right = (x < Map::hight - 1 && !W(x + 1, y));
 
             openPaths += up + down + left + right;
 
@@ -136,8 +135,9 @@ void Map::generateIntersections() {
             else {
                 continue; // Not an intersection
             }
-            
-            std::array<int, 3> pos{ {x, y, 0} };
+
+            // Create intersection and add neighbors
+            std::array<int, 3> pos{{x, y, 0}};
             Intersection intersection(pos, type);
 
             if (up) intersection.addNeighbor(UP, std::array<int, 3>{{x, y + 1, 0}});
@@ -146,25 +146,6 @@ void Map::generateIntersections() {
             if (right) intersection.addNeighbor(RIGHT, std::array<int, 3>{{x + 1, y, 0}});
 
             intersections.push_back(intersection);
-        }
-    }
-
-    // After generating all intersections, Validate it.
-    std::cout << "Generated Intersections and their Neighbors:\n";
-    for (const auto& intersection : intersections) {
-        const auto& pos = intersection.getPosition();
-        std::cout << "Intersection at (" << pos[0] << ", " << pos[1] << "):\n";
-
-        for (const auto& [dir, neighborPos] : intersection.getNeighbors()) {
-            std::string dirStr;
-            switch (dir) {
-            case UP: dirStr = "UP"; break;
-            case DOWN: dirStr = "DOWN"; break;
-            case LEFT: dirStr = "LEFT"; break;
-            case RIGHT: dirStr = "RIGHT"; break;
-            default: dirStr = "UNKNOWN";
-            }
-            std::cout << "  Neighbor " << dirStr << " at (" << neighborPos[0] << ", " << neighborPos[1] << ")\n";
         }
     }
 }

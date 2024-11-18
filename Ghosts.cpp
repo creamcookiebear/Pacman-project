@@ -4,16 +4,15 @@
 
 Blinky::Blinky():
 	Ghost(),
-	destination{ 7, 7 } {}
+	destination{ 1, 1 } {}
 Blinky::Blinky(int x, int y, int z):
 	Ghost(x,y,z),
-	destination{ 7, 7 } {}
+	destination{ 1, 1 } {}
 
 void Blinky::updateVel() {
 	Vector3f destPos;
-	PRINT("PacPos: "); pacPos.print();
 	if (!::isPow) {
-		if (true||bisActive) destPos = pacPos; // chasing Pacman
+		if (bisActive) destPos = pacPos; // chasing Pacman
 		else destPos = Agent::map2float(destination[0], destination[1]); // going to fixed point
 	}
 	else {// running away from Pacman
@@ -35,22 +34,20 @@ void Blinky::updateVel() {
 		}
 		destPos = Agent::map2float(maxDistPos[0], maxDistPos[1]);
 	}
-	PRINT("Destination: "); destPos.print();
 	DIRECTION direction = navigator(destPos);
 	vel = Agent::direction2vec(direction);
-	bInxPosUpdated = false;
 }
 
 void Blinky::move() {
 	// move
 	prevMoveHandler();
-	if (vel[0] == 0.f && vel[1] == 0.f) {
+	if (vel[0] == 0 && vel[1] == 0) {
 		bInxPosUpdated = true;
 		return;
 	}
-	
-	pos[0] = pos[0] + vel[0]; pos[1] = pos[1] + vel[1];
-	
+	if (!::isPow) {
+		pos[0] = pos[0] + vel[0]; pos[1] = pos[1] + vel[1];
+	}
 
 	postMoveHandler();
 }
