@@ -10,7 +10,7 @@
 extern Map map;
 
 struct BFSNode {
-    std::array<int, 3> position;
+    Intersection* intersection;
     DIRECTION cameFromDir;
 };
 
@@ -50,11 +50,12 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
 
     Intersection currentIntersection = map.getClosestIntersection(pos);
     Intersection destinationIntersection = map.getClosestIntersection(destination);
+    Intersection* destInterPtr = &destinationIntersection;
     PRINT("Destination Pos: ");
     PRINT(destinationIntersection.getPosition()[0] << ", " << destinationIntersection.getPosition()[1] << std::endl);
 
     std::queue<BFSNode> q;
-    q.push({ currentIntersection.getPosition(), getOppositeDirection(currentDir) });
+    q.push(BFSNode{ &currentIntersection, currentDir });
 
 
     std::unordered_set<std::array<int, 3>> visited;
@@ -67,23 +68,25 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
     while (!q.empty() && !found) {
         BFSNode node = q.front();
         q.pop();
+        Intersection* intersection = node.intersection;
 
-        if (node.position == destinationIntersection.getPosition()) {
+        if (intersection->getPosition() == destInterPtr->getPosition()) {
             found = true;
             break;
         }
 
-        Intersection& intersection = map.getIntersection(node.position);
-
-        for (const auto& [dir, neighborPos] : intersection.getNeighbors()) {
-            if (dir == node.cameFromDir) {
+        for (const auto& [dir, neighborPos] : intersection->getNeighbors()) {
+            if (node.cameFromDir != NONE && dir == getOppositeDirection(node.cameFromDir)) {
                 continue; // Avoid immediate U-turn
             }
 
-            if (visited.find(neighborPos) == visited.end()) {
-                visited.insert(neighborPos);
-                parent[neighborPos] = node.position;
-                q.push({ neighborPos, getOppositeDirection(dir) });
+            Intersection* neighborIntersection = &map.getIntersection(neighborPos);
+            if (!neighborIntersection) continue;
+
+            if (visited.find(neighborIntersection->getPosition()) == visited.end()) {
+                visited.insert(neighborIntersection->getPosition());
+                parent[neighborIntersection->getPosition()] = intersection->getPosition();
+                q.push({ neighborIntersection, dir }); // Set cameFromDir to dir
             }
         }
     }
