@@ -57,3 +57,17 @@ namespace std {
         }
     };
 }
+
+namespace std {
+    template <>
+    struct hash<std::array<int, 3>> {
+        size_t operator()(const std::array<int, 3>& arr) const noexcept {
+            size_t h = 0;
+            for (const int& val : arr) {
+                // Combine the hash of each element into the total hash
+                h ^= std::hash<int>{}(val)+0x9e3779b9 + (h << 6) + (h >> 2);
+            }
+            return h;
+        }
+    };
+}

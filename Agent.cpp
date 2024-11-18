@@ -257,12 +257,12 @@ const int Ghost::maxActiveCnt = ::FPS * Ghost::ghostActiveSec;
 
 Ghost::Ghost() :
 	Agent(),
-	bisActive(false),
+	bisActive(true),
 	activeCnt(Ghost::maxActiveCnt) {}
 
 Ghost::Ghost(int x, int y, int z) :
 	Agent(x, y, z),
-	bisActive(false),
+	bisActive(true),
 	activeCnt(Ghost::maxActiveCnt) {}
 
 Vector3f Agent::direction2vec(DIRECTION dir) {
@@ -297,6 +297,7 @@ void Ghost::postMoveHandler() {
 	if (static_cast<int>((pos[0]) / BLOCK_SIZE) + MAP_WIDTH / 2 != idxPos[0] || \
 		static_cast<int>((pos[1]) / BLOCK_SIZE) + MAP_HEIGHT / 2 != idxPos[1]) {
 		bInxPosUpdated = true;
+		pastVel = vel;
 		idxPos[0] = static_cast<int>((pos[0]) / BLOCK_SIZE) + MAP_WIDTH / 2;
 		idxPos[1] = static_cast<int>((pos[1]) / BLOCK_SIZE) + MAP_HEIGHT / 2;
 	}

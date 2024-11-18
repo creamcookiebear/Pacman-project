@@ -43,7 +43,7 @@ public:
 	bool W(Vector3f pos) const;
 
 	Intersection getClosestIntersection(const Vector3f& pos) const;
-	Intersection getIntersection(const std::array<int, 3>&);
+	Intersection& getIntersection(const std::array<int, 3>& interPos);
 	//bool getIntersectionWall(Vector3i pos); // get isWall bool by intersection coordinate
 
 	void sP(int i, int j, bool val); //set Pellet, single element

@@ -10,7 +10,7 @@
 
 using namespace std;
 
-const int FPS = 20;
+const int FPS = 30;
 int sTime = 0;
 int eTime = 0;
 
@@ -32,6 +32,9 @@ Light light(BOUNDARY_X, BOUNDARY_Y, BOUNDARY_X / 2, GL_LIGHT0);
 //Texture texture("snu.png");
 
 void initialize() {
+	string str;
+	cin >> str;
+
 	map.MapInitializer("map_source.csv"); //load map
 
 	// Light
@@ -119,28 +122,28 @@ void idle() {
 				cout << "called update vel" << endl;
 				pacman.updateVel();
 			}
+			else{ }
 			pacman.move();
 		}
 		// If Pacman is at Respawn
 		else {
 			// code for Pacman respawn state
 		}
-
-		//=========================================
-		// Ghost Move handle
-		//
-		for (Ghost* ghost : ghosts) {
-			if (!ghost->isRespawn())
-				if ((ghost->getVel() == Vector3f() || ghost->isIndexPositionUpdated())) {
-					cout << "called update vel" << endl;
-					ghost->updateVel();
-				}
-
-			// If ghost is at Respawn
-				else {
-					// code for ghost respawn state
-				}
+		
+		if (!blinky.isRespawn()) {
+			if ((blinky.isIndexPositionUpdated())) {
+				cout << "called update vel" << endl;
+				blinky.updateVel();
+			}
+			else{ }
+			blinky.move();
 		}
+		// If ghost is at Respawn
+		else {
+			// code for ghost respawn state
+		}
+
+		
 		sTime = eTime;
 		glutPostRedisplay();
 	}

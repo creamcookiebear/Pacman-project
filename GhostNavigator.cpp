@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <unordered_set>
+#include <map>
 
 #include "Intersection.h" // intersection includes "Agent.h"
 #include "Map.h"
@@ -9,81 +10,102 @@
 extern Map map;
 
 struct BFSNode {
-    Intersection intersection;
+    std::array<int, 3> position;
     DIRECTION cameFromDir;
 };
 
 DIRECTION Ghost::navigator(Vector3f destination) const {
-    // Step 1: Identify the current intersection and destination intersection
-
     PRINT("Called navigator at pos : "); PRINT_POS();
     DIRECTION currentDir;
 
-    // Determine the current direction based on `vel`
-    if (vel[0] > 0) currentDir = RIGHT;
-    else if (vel[0] < 0) currentDir = LEFT;
-    else if (vel[1] > 0) currentDir = UP;
-    else if (vel[1] < 0) currentDir = DOWN;
+    // Determine current direction based on vel
+    if (pastVel[0] > 0) currentDir = RIGHT;
+    else if (pastVel[0] < 0) currentDir = LEFT;
+    else if (pastVel[1] > 0) currentDir = UP;
+    else if (pastVel[1] < 0) currentDir = DOWN;
     else currentDir = STAY; // Default if no velocity
+
+    if (Agent::float2map(destination) == Agent::float2map(pos)) {
+        // if at destination
+        PRINT("====================\nAt Destination\n=====================" << std::endl);
+        std::map<DIRECTION, bool> ableDir;
+        std::array<int, 2> tempIdx = { {Agent::float2map(pos)[0],Agent::float2map(pos)[1]} };
+        ableDir[UP] = (Map::isInbound(tempIdx[0], tempIdx[1] + 1) && !map.W(tempIdx[0], tempIdx[1] + 1));
+        ableDir[DOWN] = (Map::isInbound(tempIdx[0], tempIdx[1] - 1) && !map.W(tempIdx[0], tempIdx[1] - 1));
+        ableDir[RIGHT] = (Map::isInbound(tempIdx[0] + 1, tempIdx[1]) && !map.W(tempIdx[0] + 1, tempIdx[1]));
+        ableDir[DOWN] = (Map::isInbound(tempIdx[0] - 1, tempIdx[1]) && !map.W(tempIdx[0] - 1, tempIdx[1]));
+        
+        for (DIRECTION dir : std::array<DIRECTION,4>{{UP,DOWN,RIGHT,LEFT}}) {
+            PRINT(ableDir[dir] << std::endl;);
+            PRINT("dir : " << dir << std::endl);
+            if ((dir != currentDir || ableDir[dir]) && dir \
+                != Ghost::getOppositeDirection(currentDir) && ableDir[dir]) {
+                PRINT("Destination ducktape case, dir : " << dir << std::endl);
+                return dir;
+            }
+        }
+        PRINT("Error at escaping" << std::endl);
+        return (DIRECTION)((currentDir + 1) % 4);
+    }
 
     Intersection currentIntersection = map.getClosestIntersection(pos);
     Intersection destinationIntersection = map.getClosestIntersection(destination);
+    PRINT("Destination Pos: ");
+    PRINT(destinationIntersection.getPosition()[0] << ", " << destinationIntersection.getPosition()[1] << std::endl);
 
-    // Use BFS to find the shortest path
-    std::queue<Intersection> q;
-    std::unordered_map<Intersection, Intersection> parent;
-    std::unordered_set<Intersection> visited;
+    std::queue<BFSNode> q;
+    q.push({ currentIntersection.getPosition(), getOppositeDirection(currentDir) });
 
-    q.push(currentIntersection);
-    visited.insert(currentIntersection);
+
+    std::unordered_set<std::array<int, 3>> visited;
+    std::unordered_map<std::array<int, 3>, std::array<int, 3>> parent;
+    
+    visited.insert(currentIntersection.getPosition());
 
     bool found = false;
 
     while (!q.empty() && !found) {
-        Intersection intersection = q.front();
+        BFSNode node = q.front();
         q.pop();
 
-        // Check if the destination intersection is reached
-        if (intersection == destinationIntersection) {
+        if (node.position == destinationIntersection.getPosition()) {
             found = true;
             break;
         }
 
-        // Iterate over the neighbors
+        Intersection& intersection = map.getIntersection(node.position);
+
         for (const auto& [dir, neighborPos] : intersection.getNeighbors()) {
-            /*
-            if (dir == getOppositeDirection(currentDir) && intersection.getType() != Intersection::DEAD_END) {
-                continue; // Skip opposite direction unless at a dead end
-            }*/
+            if (dir == node.cameFromDir) {
+                continue; // Avoid immediate U-turn
+            }
 
-            Intersection neighborIntersection = map.getIntersection(neighborPos);
-
-            if (visited.find(neighborIntersection) == visited.end()) {
-                visited.insert(neighborIntersection);
-                parent[neighborIntersection] = intersection;
-                q.push(neighborIntersection);
+            if (visited.find(neighborPos) == visited.end()) {
+                visited.insert(neighborPos);
+                parent[neighborPos] = node.position;
+                q.push({ neighborPos, getOppositeDirection(dir) });
             }
         }
     }
 
-    // If no path was found, return STAY
     if (!found) {
         PRINT("<<Critical Bug>> Path finding FAIL!"); PRINT_POS();
         return STAY;
     }
-    // Backtrack to find the next intersection in the path
-    Intersection nextIntersection = destinationIntersection;
-    while (parent[nextIntersection] != currentIntersection) {
-        nextIntersection = parent[nextIntersection];
+
+    // Reconstruct the path
+    std::array<int, 3> nextPos = destinationIntersection.getPosition();
+    while (parent[nextPos] != currentIntersection.getPosition()) {
+        nextPos = parent[nextPos];
     }
 
-    // Determine the direction to move
-    std::array<int, 3> interPos{ {Agent::float2map(pos)[0], Agent::float2map(pos)[1], 0} };
+    std::array<int, 3> interPos = currentIntersection.getPosition();
     std::array<int, 3> directionVector{
-        {nextIntersection.getPosition()[0] - interPos[0],
-         nextIntersection.getPosition()[1] - interPos[1],
-         nextIntersection.getPosition()[2] - interPos[2]} };
-    PRINT("Exit navigator at pos : "); PRINT_POS();
+        {nextPos[0] - interPos[0],
+         nextPos[1] - interPos[1],
+         0}
+    };
+
     if (directionVector[0] > 0) return RIGHT;
     if (directionVector[0] < 0) return LEFT;
     if (directionVector[1] > 0) return UP;
