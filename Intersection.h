@@ -34,19 +34,14 @@ public:
     }
 
     bool operator==(const Intersection& inter) const {
-        return inter.getPosition() == position && inter.getType() == type;
+        return inter.getPosition() == position;
     }
 
     bool operator!=(const Intersection& inter) const {
-        return !(inter.getPosition() == position) || !(inter.getType() == type);
+        return !(*this==inter);
     }
 };
 
-/*
-std::array<int, 3> operator-(std::array<int, 3> left, std::array<int, 3> right) {
-    return std::array<int, 3>{{left[0] - right[0], left[1] - right[1], left[2] - right[2] }};
-}
-*/
 
 namespace std {
     template <>
@@ -54,13 +49,11 @@ namespace std {
         size_t operator()(const Intersection& inter) const noexcept {
             size_t h1 = 0;
             const auto& pos = inter.getPosition();
-            // Manually compute the hash for the position array
+            // Compute the hash for the position array only
             for (const int& val : pos) {
                 h1 ^= std::hash<int>{}(val)+0x9e3779b9 + (h1 << 6) + (h1 >> 2);
             }
-
-            size_t h2 = std::hash<int>{}(static_cast<int>(inter.getType()));
-            return h1 ^ (h2 << 1); // Combine the hashes
+            return h1;
         }
     };
 }

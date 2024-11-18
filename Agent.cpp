@@ -20,7 +20,7 @@ std::array<int, 2> Agent::float2map(Vector3f p) { //get nearist block idx
 Agent::Agent() :
 	bisPow(false),
 	powerTick(0),
-	bisRespawn(true),
+	bisRespawn(false),
 	pos(0.f,0.f,0.f),
 	vel(0.f, 0.f, 0.f),
 	idxPos{ 4,4 }, bInxPosUpdated(true) {}
@@ -28,7 +28,7 @@ Agent::Agent() :
 Agent::Agent(int x, int y, int z):
 	bisPow(false),
 	powerTick(0),
-	bisRespawn(true),
+	bisRespawn(false),
 	pos(x, y, z),
 	vel(0.f, 0.f, 0.f),
 	idxPos{ 4,4 }, bInxPosUpdated(true){}

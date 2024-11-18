@@ -54,6 +54,16 @@ void Blinky::move() {
 
 void Blinky::draw() {
 	// draw
+	glMaterialfv(GL_FRONT, GL_EMISSION, mtl.getEmission().getPos());
+	glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	glMaterialfv(GL_FRONT, GL_SPECULAR, mtl.getSpecular().getPos());
+	glMaterialfv(GL_FRONT, GL_SHININESS, mtl.getShininess());
+
+	glPushMatrix();
+	glTranslatef(pos[0], pos[1], pos[2] + BLOCK_SIZE / 3.f);
+	glutSolidSphere(BLOCK_SIZE / 3.f, 20, 20);
+	glPopMatrix();
 }
 
 Pinky::Pinky() :

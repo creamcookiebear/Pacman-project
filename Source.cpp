@@ -22,7 +22,7 @@ Blinky blinky;
 //Inky inky;
 //Clyde clyde;
 
-std::vector<std::unique_ptr<Agent>> agents;
+std::vector<Ghost*> ghosts;
 
 bool isPow = false;
 
@@ -65,13 +65,12 @@ void initialize() {
 	mtlG1.setShininess(30.0f);
 
 	blinky.setMTL(mtlG1);
-	blinky.setIndexPosition(3, 4);
+	blinky.setIndexPosition(1, 1);
 	blinky.setVel(1.f, 0.f, 0.f);
 
 	//=======================================================
-	// Handle all Agents at once
-	agents.push_back(std::make_unique<Pacman>(pacman));
-	agents.push_back(std::make_unique<Blinky>(blinky));
+	// Handle all Ghosts at once
+	ghosts.push_back(&blinky);
 
 	//=======================================================
 	// Map
@@ -110,15 +109,38 @@ void idle() {
 
 	if (eTime - sTime > frameDuration) {
 		/* Implement: update direction and move Agents */
-		if ((pacman.getVel() == Vector3f() || pacman.isIndexPositionUpdated())) {
-			cout << "called update vel" << endl;
-			pacman.updateVel();
-		}
-		pacman.move();
-		//cout << pacman.isIndexPositionUpdated() << endl;
-		// 
-		//cout << "vel: " << pacman.getVel()[0] << ", " << pacman.getVel()[1] << endl;
 
+		//========================================
+		// Pacman Move handle
+		//
+		// If Pacman is Not respawn (normal state)
+		if (!pacman.isRespawn()) {
+			if ((pacman.getVel() == Vector3f() || pacman.isIndexPositionUpdated())) {
+				cout << "called update vel" << endl;
+				pacman.updateVel();
+			}
+			pacman.move();
+		}
+		// If Pacman is at Respawn
+		else {
+			// code for Pacman respawn state
+		}
+
+		//=========================================
+		// Ghost Move handle
+		//
+		for (Ghost* ghost : ghosts) {
+			if (!ghost->isRespawn())
+				if ((ghost->getVel() == Vector3f() || ghost->isIndexPositionUpdated())) {
+					cout << "called update vel" << endl;
+					ghost->updateVel();
+				}
+
+			// If ghost is at Respawn
+				else {
+					// code for ghost respawn state
+				}
+		}
 		sTime = eTime;
 		glutPostRedisplay();
 	}
@@ -201,8 +223,11 @@ void display() {
 	light.draw();
 
 	map.draw();
-	for (const auto& agent : agents){ // draw Pacman, Ghost(s)
-		pacman.draw();
+
+	pacman.draw();
+
+	for (Ghost* ghost : ghosts){ // draw Ghost(s)
+		ghost->draw();
 	}
 
 	glDisable(GL_DEPTH_TEST);

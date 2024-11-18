@@ -16,3 +16,7 @@ enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY };
 #define MAP_WIDTH 9 // original=28
 #define MAP_HEIGHT 9 // original=31
 #define BLOCK_SIZE 40
+
+// the bellow are for debug perpose
+#define PRINT(C) std::cout<<C
+#define PRINT_POS() std::cout<<"("<<idxPos[0]<<", "<<idxPos[1]<<")"<<std::endl

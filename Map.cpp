@@ -99,19 +99,18 @@ bool Map::Pow(Vector3i pos) const { //get Pellet by element, by Vec3i
 }
 
 void Map::generateIntersections() {
-    for (int i = 0; i < Map::hight; ++i) {// i, j is in Intercetion coord
-        for (int j = 0; j < Map::width; ++j) {
-            int y = i; // x, y is in Original(Map) coord
-            int x = j;
+    for (int y = 0; y < Map::hight; ++y) {// i, j is in Intercetion coord
+        for (int x = 0; x < Map::width; ++x) {
+            
 
-            if (arrMap[y][x][0]) continue; // Skip walls
+            if (arrMap[Map::hight-1-y][x][0]) continue; // Skip walls
 
             // Check neighboring cells
             int openPaths = 0;
-            bool up = (y > 0 && !arrMap[y - 1][x][0]);
-            bool down = (y < (Map::hight - 1) && !arrMap[y + 1][x][0]);
-            bool left = (x > 0 && !arrMap[y][x - 1][0]);
-            bool right = (x < (Map::width - 1) && !arrMap[y][x + 1][0]);
+            bool up = (y < Map::hight - 1 && !W(x, y + 1));
+            bool down = (y > 0 && !W(x, y-1));
+            bool left = (x > 0 && !W(x - 1, y));
+            bool right = (x < Map::hight - 1 && !W(x + 1, y));
 
             openPaths += up + down + left + right;
 
@@ -138,13 +137,13 @@ void Map::generateIntersections() {
             }
 
             // Create intersection and add neighbors
-            std::array<int, 3> pos{{j, i, 0}};
+            std::array<int, 3> pos{{x, y, 0}};
             Intersection intersection(pos, type);
 
-            if (up) intersection.addNeighbor(UP, std::array<int, 3>{{j, i - 1, 0}});
-            if (down) intersection.addNeighbor(DOWN, std::array<int, 3>{{j, i + 1, 0}});
-            if (left) intersection.addNeighbor(LEFT, std::array<int, 3>{{j - 1, i, 0}});
-            if (right) intersection.addNeighbor(RIGHT, std::array<int, 3>{{j + 1, i, 0}});
+            if (up) intersection.addNeighbor(UP, std::array<int, 3>{{x, y + 1, 0}});
+            if (down) intersection.addNeighbor(DOWN, std::array<int, 3>{{x, y - 1, 0}});
+            if (left) intersection.addNeighbor(LEFT, std::array<int, 3>{{x - 1, y, 0}});
+            if (right) intersection.addNeighbor(RIGHT, std::array<int, 3>{{x + 1, y, 0}});
 
             intersections.push_back(intersection);
         }
