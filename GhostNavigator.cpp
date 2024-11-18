@@ -1,7 +1,6 @@
 #include <iostream>
 #include <queue>
 #include <unordered_set>
-#include <map>
 
 #include "Intersection.h" // intersection includes "Agent.h"
 #include "Map.h"
@@ -10,43 +9,22 @@
 extern Map map;
 
 struct BFSNode {
-    std::array<int, 3> position;
+    Intersection intersection;
     DIRECTION cameFromDir;
 };
 
 DIRECTION Ghost::navigator(Vector3f destination) const {
+    // Step 1: Identify the current intersection and destination intersection
+
     PRINT("Called navigator at pos : "); PRINT_POS();
     DIRECTION currentDir;
 
-    // Determine current direction based on vel
-    if (pastVel[0] > 0) currentDir = RIGHT;
-    else if (pastVel[0] < 0) currentDir = LEFT;
-    else if (pastVel[1] > 0) currentDir = UP;
-    else if (pastVel[1] < 0) currentDir = DOWN;
+    // Determine the current direction based on `vel`
+    if (vel[0] > 0) currentDir = RIGHT;
+    else if (vel[0] < 0) currentDir = LEFT;
+    else if (vel[1] > 0) currentDir = UP;
+    else if (vel[1] < 0) currentDir = DOWN;
     else currentDir = STAY; // Default if no velocity
-
-    if (Agent::float2map(destination) == Agent::float2map(pos)) {
-        // if at destination
-        PRINT("====================\nAt Destination\n=====================" << std::endl);
-        std::map<DIRECTION, bool> ableDir;
-        std::array<int, 2> tempIdx = { {Agent::float2map(pos)[0],Agent::float2map(pos)[1]} };
-        ableDir[UP] = (Map::isInbound(tempIdx[0], tempIdx[1] + 1) && !map.W(tempIdx[0], tempIdx[1] + 1));
-        ableDir[DOWN] = (Map::isInbound(tempIdx[0], tempIdx[1] - 1) && !map.W(tempIdx[0], tempIdx[1] - 1));
-        ableDir[RIGHT] = (Map::isInbound(tempIdx[0] + 1, tempIdx[1]) && !map.W(tempIdx[0] + 1, tempIdx[1]));
-        ableDir[DOWN] = (Map::isInbound(tempIdx[0] - 1, tempIdx[1]) && !map.W(tempIdx[0] - 1, tempIdx[1]));
-        
-        for (DIRECTION dir : std::array<DIRECTION,4>{{UP,DOWN,RIGHT,LEFT}}) {
-            PRINT(ableDir[dir] << std::endl;);
-            PRINT("dir : " << dir << std::endl);
-            if ((dir != currentDir || ableDir[dir]) && dir \
-                != Ghost::getOppositeDirection(currentDir) && ableDir[dir]) {
-                PRINT("Destination ducktape case, dir : " << dir << std::endl);
-                return dir;
-            }
-        }
-        PRINT("Error at escaping" << std::endl);
-        return (DIRECTION)((currentDir + 1) % 4);
-    }
 
     Intersection currentIntersection = map.getClosestIntersection(pos);
     Intersection destinationIntersection = map.getClosestIntersection(destination);
@@ -66,48 +44,49 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
     bool found = false;
 
     while (!q.empty() && !found) {
-        BFSNode node = q.front();
+        Intersection intersection = q.front();
         q.pop();
+        Intersection* intersection = node.intersection;
 
-        if (node.position == destinationIntersection.getPosition()) {
+        // Check if the destination intersection is reached
+        if (intersection == destinationIntersection) {
             found = true;
             break;
         }
 
-        Intersection& intersection = map.getIntersection(node.position);
-
+        // Iterate over the neighbors
         for (const auto& [dir, neighborPos] : intersection.getNeighbors()) {
             // Correct U-turn avoidance condition
             if (dir == node.cameFromDir) {
                 continue; // Avoid immediate U-turn
             }
 
-            if (visited.find(neighborPos) == visited.end()) {// if not visited
+            if (visited.find(neighborPos) == visited.end()) {
                 visited.insert(neighborPos);
                 parent[neighborPos] = node.position;
-                q.push({ neighborPos, getOppositeDirection(dir) }); // Set cameFromDir to getOppositeDirection(dir)
+                q.push({ neighborPos, getOppositeDirection(dir) });
             }
         }
     }
 
+    // If no path was found, return STAY
     if (!found) {
         PRINT("<<Critical Bug>> Path finding FAIL!"); PRINT_POS();
         return STAY;
     }
-
-    // Reconstruct the path
-    std::array<int, 3> nextPos = destinationIntersection.getPosition();
-    while (parent[nextPos] != currentIntersection.getPosition()) {
-        nextPos = parent[nextPos];
+    // Backtrack to find the next intersection in the path
+    Intersection nextIntersection = destinationIntersection;
+    while (parent[nextIntersection] != currentIntersection) {
+        nextIntersection = parent[nextIntersection];
     }
 
-    std::array<int, 3> interPos = currentIntersection.getPosition();
+    // Determine the direction to move
+    std::array<int, 3> interPos{ {Agent::float2map(pos)[0], Agent::float2map(pos)[1], 0} };
     std::array<int, 3> directionVector{
-        {nextPos[0] - interPos[0],
-         nextPos[1] - interPos[1],
-         0}
-    };
-
+        {nextIntersection.getPosition()[0] - interPos[0],
+         nextIntersection.getPosition()[1] - interPos[1],
+         nextIntersection.getPosition()[2] - interPos[2]} };
+    PRINT("Exit navigator at pos : "); PRINT_POS();
     if (directionVector[0] > 0) return RIGHT;
     if (directionVector[0] < 0) return LEFT;
     if (directionVector[1] > 0) return UP;
