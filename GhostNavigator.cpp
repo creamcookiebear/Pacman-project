@@ -9,7 +9,7 @@
 extern Map map;
 
 struct BFSNode {
-    std::array<int, 3> position;
+    Intersection intersection;
     DIRECTION cameFromDir;
 };
 
@@ -28,11 +28,6 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
 
     Intersection currentIntersection = map.getClosestIntersection(pos);
     Intersection destinationIntersection = map.getClosestIntersection(destination);
-    PRINT("Destination Pos: ");
-    PRINT(destinationIntersection.getPosition()[0] << ", " << destinationIntersection.getPosition()[1] << std::endl);
-
-    std::queue<BFSNode> q;
-    q.push({ currentIntersection.getPosition(), getOppositeDirection(currentDir) });
 
     // Use BFS to find the shortest path
     std::queue<Intersection> q;
@@ -49,22 +44,25 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
         q.pop();
         Intersection* intersection = node.intersection;
 
-        if (node.position == destinationIntersection.getPosition()) {
+        // Check if the destination intersection is reached
+        if (intersection == destinationIntersection) {
             found = true;
             break;
         }
 
-        Intersection& intersection = map.getIntersection(node.position);
-
+        // Iterate over the neighbors
         for (const auto& [dir, neighborPos] : intersection.getNeighbors()) {
-            if (dir == node.cameFromDir) {
-                continue; // Avoid immediate U-turn
-            }
+            /*
+            if (dir == getOppositeDirection(currentDir) && intersection.getType() != Intersection::DEAD_END) {
+                continue; // Skip opposite direction unless at a dead end
+            }*/
 
-            if (visited.find(neighborPos) == visited.end()) {
-                visited.insert(neighborPos);
-                parent[neighborPos] = node.position;
-                q.push({ neighborPos, getOppositeDirection(dir) });
+            Intersection neighborIntersection = map.getIntersection(neighborPos);
+
+            if (visited.find(neighborIntersection) == visited.end()) {
+                visited.insert(neighborIntersection);
+                parent[neighborIntersection] = intersection;
+                q.push(neighborIntersection);
             }
         }
     }
