@@ -10,7 +10,7 @@
 
 using namespace std;
 
-const int FPS = 30;
+const int FPS = 20;
 int sTime = 0;
 int eTime = 0;
 

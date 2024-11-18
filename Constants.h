@@ -1,6 +1,6 @@
 #pragma once
 
-enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY };
+enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY, NONE };
 
 #define WINDOW_X 300
 #define WINDOW_Y 300

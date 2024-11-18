@@ -45,7 +45,7 @@ void Blinky::move() {
 	// move
 	prevMoveHandler();
 	if (vel[0] == 0.f && vel[1] == 0.f) {
-		bInxPosUpdated = true;
+		//bInxPosUpdated = true;
 		return;
 	}
 	

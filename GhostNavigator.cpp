@@ -53,13 +53,14 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
     PRINT("Destination Pos: ");
     PRINT(destinationIntersection.getPosition()[0] << ", " << destinationIntersection.getPosition()[1] << std::endl);
 
+    // Initialize the BFS queue
+    DIRECTION initialCameFromDir = (currentDir != STAY && currentDir != NONE) ? getOppositeDirection(currentDir) : NONE;
     std::queue<BFSNode> q;
-    q.push({ currentIntersection.getPosition(), getOppositeDirection(currentDir) });
-
+    q.push({ currentIntersection.getPosition(), initialCameFromDir });
 
     std::unordered_set<std::array<int, 3>> visited;
     std::unordered_map<std::array<int, 3>, std::array<int, 3>> parent;
-    
+
     visited.insert(currentIntersection.getPosition());
 
     bool found = false;
@@ -76,14 +77,15 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
         Intersection& intersection = map.getIntersection(node.position);
 
         for (const auto& [dir, neighborPos] : intersection.getNeighbors()) {
+            // Correct U-turn avoidance condition
             if (dir == node.cameFromDir) {
                 continue; // Avoid immediate U-turn
             }
 
-            if (visited.find(neighborPos) == visited.end()) {
+            if (visited.find(neighborPos) == visited.end()) {// if not visited
                 visited.insert(neighborPos);
                 parent[neighborPos] = node.position;
-                q.push({ neighborPos, getOppositeDirection(dir) });
+                q.push({ neighborPos, getOppositeDirection(dir) }); // Set cameFromDir to getOppositeDirection(dir)
             }
         }
     }
@@ -110,10 +112,10 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
     if (directionVector[0] < 0) return LEFT;
     if (directionVector[1] > 0) return UP;
     if (directionVector[1] < 0) return DOWN;
-
+    PRINT("===========================\nError case!\n=========================\n");
+    PRINT("Direction match fail" << std::endl);
     return STAY;
 }
-
 
 DIRECTION Ghost::getOppositeDirection(DIRECTION dir) const {
     switch (dir) {
@@ -121,6 +123,6 @@ DIRECTION Ghost::getOppositeDirection(DIRECTION dir) const {
     case DOWN: return UP;
     case LEFT: return RIGHT;
     case RIGHT: return LEFT;
-    default: return STAY;
+    default: return NONE; // For STAY or NONE
     }
 }
