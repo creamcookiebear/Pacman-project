@@ -45,7 +45,7 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
             }
         }
         PRINT("Error at escaping" << std::endl);
-        return (DIRECTION)((currentDir + 1) % 4);
+        return (DIRECTION)(currentDir);
     }
 
     Intersection currentIntersection = map.getClosestIntersection(pos);

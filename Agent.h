@@ -12,6 +12,7 @@ extern Map map;
 extern bool isPow;
 extern const int FPS;
 extern Vector3f pacPos;
+extern Vector3i pacVel;
 
 class Agent {
 protected:
@@ -30,7 +31,8 @@ protected:
 	virtual void prevMoveHandler()=0;
 	virtual void postMoveHandler()=0;
 public:
-	static const int maxPowerTick = 100;
+	constexpr static const int maxPowerSec = 10;
+	static const int maxPowerTick = Agent::maxPowerSec * FPS_SET;
 	static Vector3f map2float(int, int);
 	static Vector3f map2float(std::array<int, 2> arr) {
 		return map2float(arr[0], arr[1]);
@@ -94,6 +96,6 @@ public:
 	Ghost(int x, int y, int z);
 	
 	bool isActive() const;
-	virtual void move() override = 0;
+	void move() override;
 	virtual void draw() override = 0;
 };

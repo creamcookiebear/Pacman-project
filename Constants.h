@@ -2,6 +2,9 @@
 
 enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY, NONE };
 
+#define FPS_SET 30
+#define VEL_SCALE 0.5f
+
 #define WINDOW_X 300
 #define WINDOW_Y 300
 
@@ -13,9 +16,9 @@ enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY, NONE };
 
 #define tick 5
 #define pad tick / 2
-#define MAP_WIDTH 9 // original=28
-#define MAP_HEIGHT 9 // original=31
-#define BLOCK_SIZE 40
+#define MAP_WIDTH 28 // original=28
+#define MAP_HEIGHT 31 // original=31
+#define BLOCK_SIZE 10
 
 // the bellow are for debug perpose
 #define PRINT(C) std::cout<<C

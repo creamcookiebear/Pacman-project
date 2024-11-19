@@ -170,6 +170,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="map_source.csv" />
+    <None Include="original_pacman_map_source.csv" />
+    <None Include="reflected_pacman_map.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,7 +7,6 @@ private:
 public:
 	Blinky();
 	Blinky(int x, int y, int z);
-	void move() override;
 	void draw() override;
 	void updateVel() override;
 };
@@ -18,8 +17,8 @@ private:
 public:
 	Pinky();
 	Pinky(int x, int y, int z);
-	void move() override;
 	void draw() override;
+	void updateVel() override;
 };
 
 class Inky : public Ghost {
@@ -28,8 +27,8 @@ private:
 public:
 	Inky();
 	Inky(int x, int y, int z);
-	void move() override;
 	void draw() override;
+	void updateVel() override;
 };
 
 class Clyde : public Ghost {
@@ -38,6 +37,6 @@ private:
 public:
 	Clyde();
 	Clyde(int x, int y, int z);
-	void move() override;
 	void draw() override;
+	void updateVel() override;
 };

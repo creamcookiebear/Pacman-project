@@ -88,5 +88,11 @@
     <None Include="map_source.csv">
       <Filter>리소스 파일</Filter>
     </None>
+    <None Include="original_pacman_map_source.csv">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="reflected_pacman_map.csv">
+      <Filter>리소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -40,10 +40,12 @@ void Map::sW(Vector3i pos, bool val) {
 }
 
 bool Map::W(int x, int y) const {
+    if (!Map::isInbound(x, y)) return true; // if out of Map bound. return true.
     return arrMap[Map::toMap(x, y)[0]][Map::toMap(x, y)[1]][0];
 }
 
 bool Map::W(Vector3i pos) const { //get Pellet by element, by Vec3i
+    if (!Map::isInbound(pos[0], pos[1])) return true; // if out of Map bound. return true.
 	return arrMap[Map::toMap(pos[0], pos[1])[0]][Map::toMap(pos[0], pos[1])[1]][0];
 }
 
@@ -181,7 +183,7 @@ void Map::setMtl_power(Material mtl) {
 
 void Map::MapInitializer(const std::string& filename) {
     // load map for once
-    loadMapFromFile(filename, Map::width, Map::hight);
+    loadMapFromFile(filename, Map::hight, Map::width);
     //
     generateIntersections();
 }
@@ -202,6 +204,7 @@ void Map::loadMapFromFile(const std::string& filename, int width, int height) {
             int encodedValue;
             if (!(stream >> encodedValue) || encodedValue < 0 || encodedValue > 3) {
                 std::cerr << "Invalid encoded value at (" << w << ", " << h << ")" << std::endl;
+                PRINT(encodedValue << std::endl);
                 return;
             }
 
@@ -223,8 +226,8 @@ void Map::loadMapFromFile(const std::string& filename, int width, int height) {
         for (const auto& col : row) {
             char type;
             if (col[0]) type = 'B';
-            else if (col[1]) type = 'O';
-            else if (col[2]) type = 'P';
+            else if (col[1]) type = '.';
+            else if (col[2]) type = 'o';
             else type = ' ';
             std::cout << type;
         }

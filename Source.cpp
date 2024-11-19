@@ -10,14 +10,15 @@
 
 using namespace std;
 
-const int FPS = 20;
+const int FPS = FPS_SET;
 int sTime = 0;
 int eTime = 0;
 
 Pacman pacman;
 Vector3f pacPos(0.f,0.f,0.f);
+Vector3i pacVel(0, 0, 0);
 
-//Pinky pinky;
+Pinky pinky;
 Blinky blinky;
 //Inky inky;
 //Clyde clyde;
@@ -26,16 +27,15 @@ std::vector<Ghost*> ghosts;
 
 bool isPow = false;
 
+bool bstart = true; // for debug
+
 Map map;
 
 Light light(BOUNDARY_X, BOUNDARY_Y, BOUNDARY_X / 2, GL_LIGHT0);
 //Texture texture("snu.png");
 
 void initialize() {
-	string str;
-	cin >> str;
-
-	map.MapInitializer("map_source.csv"); //load map
+	map.MapInitializer("reflected_pacman_map.csv"); //load map
 
 	// Light
 	light.setAmbient(0.5f, 0.5f, 0.5f, 1.0f);
@@ -51,7 +51,7 @@ void initialize() {
 	mtlPac.setShininess(30.0f);
 
 	//pacman.setIndexPosition(Map::width / 2, Map::hight / 2);
-	pacman.setIndexPosition(4, 4);
+	pacman.setIndexPosition(13, 7);
 	pacman.setVel(0.0f, 0.0f, 0.0f);
 	pacman.setMTL(mtlPac);
 
@@ -62,18 +62,31 @@ void initialize() {
 	// Blinky
 	Material mtlG1;
 	mtlG1.setEmission(0.2f, 0.2f, 0.2f, 1.0f);
-	mtlG1.setAmbient(0.0f, 0.6f, 0.6f, 1.0f);
-	mtlG1.setDiffuse(0.0f, 0.8f, 0.8f, 1.0f);
+	mtlG1.setAmbient(0.6f, 0.0f, 0.0f, 1.0f);
+	mtlG1.setDiffuse(0.8f, 0.0f, 0.0f, 1.0f);
 	mtlG1.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
 	mtlG1.setShininess(30.0f);
 
 	blinky.setMTL(mtlG1);
-	blinky.setIndexPosition(1, 1);
-	blinky.setVel(1.f, 0.f, 0.f);
+	blinky.setIndexPosition(26, 29);//26, 29
+	blinky.setVel(-1.f, 0.f, 0.f);
 
+	// Pinky
+	Material mtlG2;
+	mtlG2.setEmission(0.2f, 0.2f, 0.2f, 1.0f);
+	mtlG2.setAmbient(0.6f, 0.0f, 0.6f, 1.0f);
+	mtlG2.setDiffuse(0.8f, 0.0f, 0.8f, 1.0f);
+	mtlG2.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+	mtlG2.setShininess(30.0f);
+
+	pinky.setMTL(mtlG2);
+	pinky.setIndexPosition(2, 29);
+	pinky.setVel(0.f, -1.f, 0.f);
+	
 	//=======================================================
 	// Handle all Ghosts at once
 	ghosts.push_back(&blinky);
+	ghosts.push_back(&pinky);
 
 	//=======================================================
 	// Map
@@ -118,7 +131,7 @@ void idle() {
 		//
 		// If Pacman is Not respawn (normal state)
 		if (!pacman.isRespawn()) {
-			if ((pacman.getVel() == Vector3f() || pacman.isIndexPositionUpdated())) {
+			if (pacman.isIndexPositionUpdated()) {
 				cout << "called update vel" << endl;
 				pacman.updateVel();
 			}
@@ -130,22 +143,29 @@ void idle() {
 			// code for Pacman respawn state
 		}
 		
-		if (!blinky.isRespawn()) {
-			if ((blinky.isIndexPositionUpdated())) {
-				cout << "called update vel" << endl;
-				blinky.updateVel();
+		for (Ghost* ghost : ghosts){
+			if (!ghost->isRespawn()) {
+				if ((ghost->isIndexPositionUpdated() || ghost->getVel() == Vector3f())) {
+					cout << "called update vel" << endl;
+					ghost->updateVel();
+				}
+				else {}
+				ghost->move();
 			}
-			else{ }
-			blinky.move();
-		}
-		// If ghost is at Respawn
-		else {
-			// code for ghost respawn state
+			// If ghost is at Respawn
+			else {
+				// code for ghost respawn state
+			}
 		}
 
 		
 		sTime = eTime;
 		glutPostRedisplay();
+		if (bstart) {
+			bstart = false;
+			string str;
+			cin >> str;
+		}
 	}
 }
 
@@ -184,21 +204,21 @@ void display() {
 		// Set up the perspective projection
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		gluPerspective(45.0, (double)BOUNDARY_X / (double)BOUNDARY_Y*3, 0.1, BLOCK_SIZE*100.0);
-
+		//gluPerspective(45.0, (double)BOUNDARY_X / (double)BOUNDARY_Y*3, 0.1, BLOCK_SIZE*400.0);
+		gluPerspective(35.0, (double)BOUNDARY_X / (double)BOUNDARY_Y*5, 0.1, BLOCK_SIZE * 200.0);
 		// Switch to the modelview matrix and set the camera
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		// Position the camera
 		gluLookAt(
-			0.0, 0.0, BLOCK_SIZE*20.f,  // Camera position (x, y, z)
+			0.0, 0.0, BLOCK_SIZE*60.f,  // Camera position (x, y, z)
 			0.0, 0.0, 0.0,   // Look at point (center x, y, z)
 			0.0, 1.0, 0.0    // Up vector (x, y, z)
 		);
 
 		// Apply a rotation to tilt the view down 15 degrees
-		glRotatef(-30.0, 1.0, 0.0, 0.0);
+		glRotatef(-5.0, 1.0, 0.0, 0.0);
 	}
 	
 
