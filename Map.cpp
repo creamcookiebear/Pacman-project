@@ -63,6 +63,7 @@ Intersection Map::getClosestIntersection(const Vector3f& pos) const {
         if (it->getPosition() == interPos) return *it;
     }
     std::cout << "No matching intersection.\nError case." << std::endl;
+    pos.print();
     return Intersection(std::array<int, 3>{{0, 0, 0}}, Intersection::STRAIGHT); // error case
 }
 

@@ -2,7 +2,7 @@
 
 enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY, NONE };
 
-#define FPS_SET 30
+#define FPS_SET 60
 #define VEL_SCALE 0.5f
 
 #define WINDOW_X 300

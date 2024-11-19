@@ -48,7 +48,9 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
         return (DIRECTION)(currentDir);
     }
 
+    PRINT("Curr pos Intersection call :");
     Intersection currentIntersection = map.getClosestIntersection(pos);
+    PRINT("Dest pos Intersection call :");
     Intersection destinationIntersection = map.getClosestIntersection(destination);
     PRINT("Destination Pos: ");
     PRINT(destinationIntersection.getPosition()[0] << ", " << destinationIntersection.getPosition()[1] << std::endl);

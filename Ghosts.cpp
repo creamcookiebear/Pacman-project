@@ -75,18 +75,17 @@ void Pinky::updateVel() {
 				destPos = pacPos;
 			}
 			else {
+				destPos = pacPos;
 				for (int i = 1; i < 5; i++) {
 					int xi = pacIdxPos[0] + i * (int)pacVel[0]; int yi = pacIdxPos[1] + i * (int)pacVel[1];
 					
-					if (!map.isInbound(xi,yi)||map.isInbound(xi, yi) && map.W(xi, yi)) {
-						destPos[0] = pacPos[0] + pacVel[0] * (i - 1);
-						destPos[1] = pacPos[1] + pacVel[1] * (i - 1);
+					if (map.isInbound(xi, yi) && !map.W(xi, yi)) {
+						destPos[0] = pacPos[0] + pacVel[0] * i;
+						destPos[1] = pacPos[1] + pacVel[1] * i;
+					}
+					else {
 						break;
 					}
-					else if (i == 4) {
-						destPos[0] = pacIdxPos[0] + 4 * pacVel[0];
-						destPos[1] = pacIdxPos[1] + 4 * pacVel[1];
-					}else{}
 				}
 			}
 			if (destPos[0] == 0 && destPos[1] == 0) {
