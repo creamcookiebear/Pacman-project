@@ -1,6 +1,8 @@
 #pragma once
 #include "Agent.h"
 
+extern Vector3f blinkyPos;
+
 class Blinky : public Ghost {
 private:
 	std::array<int, 2> destination; // un-active objective

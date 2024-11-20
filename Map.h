@@ -67,6 +67,8 @@ public:
 	void MapInitializer(const std::string& filename);
 	void loadMapFromFile(const std::string& filename, int width, int height);
 
+	const std::vector<Intersection>& getIntersections() const;
+
 private:
 	std::vector<std::vector<std::array<bool, 4>>> arrMap;
 	// arrMapd은 각 맵 타일마다 4개의 bool arr을 갖고 있다.

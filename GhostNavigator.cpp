@@ -33,13 +33,12 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
         ableDir[UP] = (Map::isInbound(tempIdx[0], tempIdx[1] + 1) && !map.W(tempIdx[0], tempIdx[1] + 1));
         ableDir[DOWN] = (Map::isInbound(tempIdx[0], tempIdx[1] - 1) && !map.W(tempIdx[0], tempIdx[1] - 1));
         ableDir[RIGHT] = (Map::isInbound(tempIdx[0] + 1, tempIdx[1]) && !map.W(tempIdx[0] + 1, tempIdx[1]));
-        ableDir[DOWN] = (Map::isInbound(tempIdx[0] - 1, tempIdx[1]) && !map.W(tempIdx[0] - 1, tempIdx[1]));
+        ableDir[LEFT] = (Map::isInbound(tempIdx[0] - 1, tempIdx[1]) && !map.W(tempIdx[0] - 1, tempIdx[1]));
         
         for (DIRECTION dir : std::array<DIRECTION,4>{{UP,DOWN,RIGHT,LEFT}}) {
             PRINT(ableDir[dir] << std::endl;);
             PRINT("dir : " << dir << std::endl);
-            if ((dir != currentDir || ableDir[dir]) && dir \
-                != Ghost::getOppositeDirection(currentDir) && ableDir[dir]) {
+            if (dir != Ghost::getOppositeDirection(currentDir) && ableDir[dir]) {
                 PRINT("Destination ducktape case, dir : " << dir << std::endl);
                 return dir;
             }

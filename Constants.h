@@ -23,3 +23,5 @@ enum DIRECTION { UP, DOWN, RIGHT, LEFT, STAY, NONE };
 // the bellow are for debug perpose
 #define PRINT(C) std::cout<<C
 #define PRINT_POS() std::cout<<"("<<idxPos[0]<<", "<<idxPos[1]<<")"<<std::endl
+
+#define SQ(V) V*V

@@ -292,3 +292,7 @@ void Map::drawPower(Vector3f pos) {
     glutSolidCube(Map::blockSize / 3);
     glPopMatrix();
 }
+
+const std::vector<Intersection>& Map::getIntersections() const {
+    return intersections;
+}

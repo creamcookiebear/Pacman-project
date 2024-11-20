@@ -308,11 +308,11 @@ void Ghost::prevMoveHandler() {
 	if (::isPow) {// set Global isPow = fasle
 		// bla bla
 	}
-	if (activeCnt == Ghost::maxActiveCnt) {
+	if (activeCnt == 0) {
 		bisActive = !bisActive;
-		activeCnt = 0;
+		activeCnt = Ghost::maxActiveCnt;
 	}
-	activeCnt++;
+	activeCnt--;
 }
 void Ghost::postMoveHandler() {
 	if (abs(Agent::map2float(idxPos)[0] - pos[0]) >= BLOCK_SIZE || \

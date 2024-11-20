@@ -17,11 +17,12 @@ int eTime = 0;
 Pacman pacman;
 Vector3f pacPos(0.f,0.f,0.f);
 Vector3i pacVel(0, 0, 0);
+Vector3f blinkyPos(0.f, 0.f, 0.f);
 
 Pinky pinky;
 Blinky blinky;
-//Inky inky;
-//Clyde clyde;
+Inky inky;
+Clyde clyde;
 
 std::vector<Ghost*> ghosts;
 
@@ -68,8 +69,8 @@ void initialize() {
 	mtlG1.setShininess(30.0f);
 
 	blinky.setMTL(mtlG1);
-	blinky.setIndexPosition(26, 29);//26, 29
-	blinky.setVel(-1.f, 0.f, 0.f);
+	blinky.setIndexPosition(16, 19);//26, 29
+	blinky.setVel(1.f, 0.f, 0.f);
 
 	// Pinky
 	Material mtlG2;
@@ -80,13 +81,38 @@ void initialize() {
 	mtlG2.setShininess(30.0f);
 
 	pinky.setMTL(mtlG2);
-	pinky.setIndexPosition(2, 29);
-	pinky.setVel(0.f, -1.f, 0.f);
+	pinky.setIndexPosition(15, 19);
+	pinky.setVel(-1.f, 0.f, 0.f);
 	
+	// Inky
+	Material mtlG3;
+	mtlG3.setEmission(0.2f, 0.2f, 0.2f, 1.0f);
+	mtlG3.setAmbient(0.0f, 0.6f, 0.6f, 1.0f);
+	mtlG3.setDiffuse(0.0f, 0.8f, 0.8f, 1.0f);
+	mtlG3.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+	mtlG3.setShininess(30.0f);
+
+	inky.setMTL(mtlG3);
+	inky.setIndexPosition(14, 19);
+	inky.setVel(1.f, 0.f, 0.f);
+
+	// Clyde
+	Material mtlG4;
+	mtlG4.setEmission(0.2f, 0.2f, 0.2f, 1.0f);
+	mtlG4.setAmbient(0.7286f, 0.4714f, 0.0f, 1.0f); //0.7286f, 0.4714f, 0.0f, 1.0f
+	mtlG4.setDiffuse(0.9714f, 0.6285f, 0.0f, 1.0f); //0.9714f, 0.6285f, 0.0f, 1.0f
+	mtlG4.setSpecular(1.0f, 1.0f, 1.0f, 1.0f);
+	mtlG4.setShininess(30.0f);
+
+	clyde.setMTL(mtlG4);
+	clyde.setIndexPosition(13, 19);
+	clyde.setVel(-1.f, 0.f, 0.f);
 	//=======================================================
 	// Handle all Ghosts at once
 	ghosts.push_back(&blinky);
 	ghosts.push_back(&pinky);
+	ghosts.push_back(&inky);
+	ghosts.push_back(&clyde);
 
 	//=======================================================
 	// Map
@@ -142,6 +168,8 @@ void idle() {
 		else {
 			// code for Pacman respawn state
 		}
+
+		blinkyPos = blinky.getPos();
 		
 		for (Ghost* ghost : ghosts){
 			if (!ghost->isRespawn()) {
