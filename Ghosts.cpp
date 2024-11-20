@@ -4,10 +4,10 @@
 
 Blinky::Blinky():
 	Ghost(),
-	destination{ MAP_WIDTH-2, MAP_HEIGHT-2 } {}
+	destination{ MAP_WIDTH-2, MAP_HEIGHT-2 } {respawnTick = 0;}
 Blinky::Blinky(int x, int y, int z):
 	Ghost(x,y,z),
-	destination{ MAP_WIDTH - 2, MAP_HEIGHT - 2 } {}
+	destination{ MAP_WIDTH - 2, MAP_HEIGHT - 2 } {respawnTick = 0;}
 
 void Blinky::updateVel() {
 	Vector3f destPos;
@@ -57,10 +57,16 @@ void Blinky::draw() {
 
 Pinky::Pinky() :
 	Ghost(),
-	destination{ 1, MAP_HEIGHT - 2 } {}
+	destination{ 1, MAP_HEIGHT - 2 } {
+	bisRespawn = true;
+	respawnTick = FPS_SET * 5;
+}
 Pinky::Pinky(int x, int y, int z) :
 	Ghost(x, y, z),
-	destination{ 1, MAP_HEIGHT - 2 } {}
+	destination{ 1, MAP_HEIGHT - 2 } {
+	respawnTick = FPS_SET * 5;
+	bisRespawn = true;
+}
 
 void Pinky::updateVel() {
 	Vector3f destPos;
@@ -138,10 +144,16 @@ void Pinky::draw() {
 
 Inky::Inky() :
 	Ghost(),
-	destination{ MAP_WIDTH - 2, 1 } {}
+	destination{ MAP_WIDTH - 2, 1 } {
+	respawnTick = FPS_SET*10;
+	bisRespawn = true;
+}
 Inky::Inky(int x, int y, int z) :
 	Ghost(x, y, z),
-	destination{ MAP_WIDTH - 2, 1 } {}
+	destination{ MAP_WIDTH - 2, 1 } {
+	respawnTick = FPS_SET * 10;
+	bisRespawn = true;
+}
 
 void Inky::updateVel() {
 	Vector3f destPos;
@@ -221,10 +233,16 @@ void Inky::draw() {
 
 Clyde::Clyde() :
 	Ghost(),
-	destination{ 1, 1 } {}
+	destination{ 1, 1 } {
+	respawnTick = FPS_SET * 15;
+	bisRespawn = true;
+}
 Clyde::Clyde(int x, int y, int z) :
 	Ghost(x, y, z),
-	destination{ 1, 1 } {}
+	destination{ 1, 1 } {
+	respawnTick = FPS_SET * 15;
+	bisRespawn = true;
+}
 
 void Clyde::updateVel() {
 	Vector3f destPos;

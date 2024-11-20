@@ -210,6 +210,9 @@ void Map::loadMapFromFile(const std::string& filename, int width, int height) {
             }
 
             std::array<bool, 4> tileState = { false, false, false, false };
+            if (encodedValue == 3) {
+                tileState[0] = true;
+            }
             tileState[encodedValue] = true;
 
             arrMap[w][h] = tileState;
@@ -241,7 +244,7 @@ void Map::draw() {
     for (int ym = 0; ym < Map::hight; ym++) {
         for (int xm = 0; xm < Map::width; xm++) {
             y = Map::hight-1 - ym; x = xm;
-            if (arrMap[ym][xm][0]) drawWall(Map::map2float(x, y)); // draw wall
+            if (arrMap[ym][xm][0]&&!arrMap[ym][xm][3]) drawWall(Map::map2float(x, y)); // draw wall
             else if (arrMap[ym][xm][1]) drawPellet(Map::map2float(x, y)); // draw pellet
             else if (arrMap[ym][xm][2]) drawPower(Map::map2float(x, y)); // draw Power
         }

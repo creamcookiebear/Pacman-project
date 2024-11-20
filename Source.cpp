@@ -81,8 +81,8 @@ void initialize() {
 	mtlG2.setShininess(30.0f);
 
 	pinky.setMTL(mtlG2);
-	pinky.setIndexPosition(15, 19);
-	pinky.setVel(-1.f, 0.f, 0.f);
+	pinky.setIndexPosition(11, 15);
+	pinky.setVel(0.f, 1.f, 0.f);
 	
 	// Inky
 	Material mtlG3;
@@ -93,8 +93,8 @@ void initialize() {
 	mtlG3.setShininess(30.0f);
 
 	inky.setMTL(mtlG3);
-	inky.setIndexPosition(14, 19);
-	inky.setVel(1.f, 0.f, 0.f);
+	inky.setIndexPosition(13, 17);
+	inky.setVel(0.f, -1.f, 0.f);
 
 	// Clyde
 	Material mtlG4;
@@ -105,8 +105,8 @@ void initialize() {
 	mtlG4.setShininess(30.0f);
 
 	clyde.setMTL(mtlG4);
-	clyde.setIndexPosition(13, 19);
-	clyde.setVel(-1.f, 0.f, 0.f);
+	clyde.setIndexPosition(15, 15);
+	clyde.setVel(0.f, 1.f, 0.f);
 	//=======================================================
 	// Handle all Ghosts at once
 	ghosts.push_back(&blinky);
@@ -169,7 +169,7 @@ void idle() {
 			// code for Pacman respawn state
 		}
 
-		blinkyPos = blinky.getPos();
+		blinkyPos = blinky.getPos(); // this is for Inky path finding
 		
 		for (Ghost* ghost : ghosts){
 			if (!ghost->isRespawn()) {
@@ -179,10 +179,16 @@ void idle() {
 				}
 				else {}
 				ghost->move();
+
+				if ((pacPos - ghost->getPos()).norm() < (BLOCK_SIZE / 3.f * 2.f)) {
+					// if Pacman catch Ghost
+					ghost->setIsRespawn(true);
+				}
 			}
 			// If ghost is at Respawn
 			else {
 				// code for ghost respawn state
+				ghost->move();
 			}
 		}
 

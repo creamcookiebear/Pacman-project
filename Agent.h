@@ -24,6 +24,7 @@ protected:
 	bool bisPow;
 	int powerTick; // Powerup for 100 tick
 	bool bisRespawn;
+
 	bool directionCheck();
 	bool directionCheck(const Vector3f&, const Vector3f&) const;
 	Material mtl;
@@ -31,7 +32,7 @@ protected:
 	virtual void prevMoveHandler()=0;
 	virtual void postMoveHandler()=0;
 public:
-	constexpr static const int maxPowerSec = 10;
+	constexpr static const int maxPowerSec = 15;
 	static const int maxPowerTick = Agent::maxPowerSec * FPS_SET;
 	static Vector3f map2float(int, int);
 	static Vector3f map2float(std::array<int, 2> arr) {
@@ -83,6 +84,7 @@ class Ghost : public Agent {
 protected:
 	bool bisActive;
 	int activeCnt;
+	int respawnTick;
 	DIRECTION navigator(Vector3f destination) const;
 	DIRECTION getOppositeDirection(DIRECTION dir) const;
 	void prevMoveHandler() override;
@@ -90,11 +92,13 @@ protected:
 	Vector3f pastVel;
 public:
 	static const int maxActiveCnt;
+	static const int maxRespawnTick = FPS_SET * 5;
 	static const int ghostActiveSec = 20;
 
 	Ghost();
 	Ghost(int x, int y, int z);
 	
+	void setIsRespawn(bool b);
 	bool isActive() const;
 	void move() override;
 	virtual void draw() override = 0;

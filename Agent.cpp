@@ -80,6 +80,7 @@ bool Agent::isPow() const {
 bool Agent::isRespawn() const {
 	return bisRespawn;
 }
+
 void Agent::setMTL(const Material& m) { mtl = m; }
 
 
@@ -308,11 +309,21 @@ void Ghost::prevMoveHandler() {
 	if (::isPow) {// set Global isPow = fasle
 		// bla bla
 	}
-	if (activeCnt == 0) {
-		bisActive = !bisActive;
-		activeCnt = Ghost::maxActiveCnt;
+	if (bisRespawn) {// Pacman에게 먹힌 경우
+		if (--respawnTick == 0) {// 감옥 탈출
+			bisRespawn = false;
+			this->setIndexPosition(13, 19);
+			bInxPosUpdated = true;
+			this->setVel(1.f, 0.f, 0.f);
+		}
 	}
-	activeCnt--;
+	if (!bisRespawn) {
+		if (activeCnt == 0) {
+			bisActive = !bisActive;
+			activeCnt = Ghost::maxActiveCnt;
+		}
+		activeCnt--;
+	}
 }
 void Ghost::postMoveHandler() {
 	if (abs(Agent::map2float(idxPos)[0] - pos[0]) >= BLOCK_SIZE || \
@@ -327,15 +338,40 @@ void Ghost::postMoveHandler() {
 void Ghost::move() {
 	// move
 	prevMoveHandler();
-	if (vel[0] == 0.f && vel[1] == 0.f) {
-		//bInxPosUpdated = true;
-		return;
+	if (bisRespawn) {
+		//move in cage
+		if (bInxPosUpdated) {
+			if (idxPos[1] == 15) {// at bottom of cage
+				vel[1] = 1.f;//go up
+			}
+			else if (idxPos[1] == 17) {
+				vel[1] = -1.f;//go down
+			}
+			else {
+				//do nothing
+			}
+		}
+		pos[0] = pos[0] + vel[0] * VEL_SCALE; pos[1] = pos[1] + vel[1] * VEL_SCALE;
 	}
-
-	pos[0] = pos[0] + vel[0] * VEL_SCALE; pos[1] = pos[1] + vel[1] * VEL_SCALE;
-
-
+	if(!bisRespawn) {
+		if (vel[0] == 0.f && vel[1] == 0.f) {
+			return;
+		}
+		pos[0] = pos[0] + vel[0] * VEL_SCALE; pos[1] = pos[1] + vel[1] * VEL_SCALE;
+	}
 	postMoveHandler();
 }
 
 bool Ghost::isActive() const { return bisActive; }
+
+void Ghost::setIsRespawn(bool b) {
+	bisRespawn = b;
+	if (b == true) {
+		respawnTick = Ghost::maxRespawnTick;
+		this->setIndexPosition(13, 15);
+		this->setVel(0.f, 1.f, 0.f);
+	}
+	else {
+		respawnTick = -1;
+	}
+}
