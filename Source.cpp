@@ -37,7 +37,7 @@ Light light(BOUNDARY_X, BOUNDARY_Y, BOUNDARY_X / 2, GL_LIGHT0);
 
 void initialize() {
 	map.MapInitializer("reflected_pacman_map.csv"); //load map
-
+	
 	// Light
 	light.setAmbient(0.5f, 0.5f, 0.5f, 1.0f);
 	light.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
@@ -182,7 +182,13 @@ void idle() {
 
 				if ((pacPos - ghost->getPos()).norm() < (BLOCK_SIZE / 3.f * 2.f)) {
 					// if Pacman catch Ghost
-					ghost->setIsRespawn(true);
+					if (isPow) {
+						ghost->setIsRespawn(true);
+					}
+					else {
+						// 팩맨 사망 처리
+						/////////////////////////////////
+					}
 				}
 			}
 			// If ghost is at Respawn
@@ -252,27 +258,9 @@ void display() {
 		);
 
 		// Apply a rotation to tilt the view down 15 degrees
-		glRotatef(-5.0, 1.0, 0.0, 0.0);
+		glRotatef(-30.0, 1.0, 0.0, 0.0);
 	}
 	
-
-	// Draw 2D
-	/* Implement: (1) draw map, and (2) draw student ID and name */
-
-	
-	/*
-	string c = "2020-14247 Shinyee Kang";
-	glPushMatrix();
-	glLineWidth(1.f);
-	glTranslatef(LEFT_BOUNDARY - 3.f * BLOCK_SIZE, TOP_BOUNDARY + 3.f * BLOCK_SIZE, 0.0f);
-	float scale_text = 20;
-	glScalef(scale_text / 152.38f, scale_text / 152.38f, scale_text / 152.38f);
-	for (int i = 0; i < c.size(); i++) {
-		glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, c[i]);
-	}
-	glPopMatrix();
-	*/
-
 	// Draw 3D
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);

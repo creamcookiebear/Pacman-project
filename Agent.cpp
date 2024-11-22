@@ -12,8 +12,6 @@ Vector3f Agent::map2float(int x, int y) {
 std::array<int, 2> Agent::float2map(Vector3f p) { //get nearist block idx
 	float xf = p[0]; float yf = p[1];
 	int x, y;
-	//x = static_cast<int>(0.5 * (2.f * xf / BLOCK_SIZE + MAP_WIDTH - 1) + 0.5);
-	//y = static_cast<int>(0.5 * (2.f * yf / BLOCK_SIZE + MAP_HEIGHT - 1) + 0.5);
 	x = static_cast<int>(xf / BLOCK_SIZE + MAP_WIDTH * 0.5f);
 	y = static_cast<int>(yf / BLOCK_SIZE + MAP_HEIGHT * 0.5f);
 	return std::array<int, 2> {{x, y}};;
