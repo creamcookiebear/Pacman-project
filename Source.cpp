@@ -118,9 +118,9 @@ void initialize() {
 	// Map
 	//
 	Material mtlWall;
-	mtlWall.setEmission(0.0f, 0.0f, 0.05f, 1.0f);
+	mtlWall.setEmission(0.1f, 0.1f, 0.4f, 1.0f);
 	mtlWall.setAmbient(0.0f, 0.0f, 0.2f, 1.0f);
-	mtlWall.setDiffuse(0.0f, 0.0f, 0.5f, 1.0f);
+	mtlWall.setDiffuse(0.1f, 0.1f, 0.7f, 1.0f);
 	mtlWall.setSpecular(0.1f, 0.1f, 0.1f, 1.0f);
 	mtlWall.setShininess(10.0f);
 

@@ -104,8 +104,8 @@ bool Map::Pow(Vector3i pos) const { //get Pellet by element, by Vec3i
 }
 
 void Map::generateIntersections() {
-    for (int y = 0; y < Map::hight; ++y) { // y ranges from 0 to hight - 1
-        for (int x = 0; x < Map::width; ++x) { // x ranges from 0 to width - 1
+    for (int y = 0; y < Map::hight; ++y) {
+        for (int x = 0; x < Map::width; ++x) {
 
             if (arrMap[Map::hight - 1 - y][x][0]) continue; // Skip walls
 
@@ -151,8 +151,6 @@ void Map::generateIntersections() {
             intersections.push_back(intersection);
         }
     }
-
-    // After generating all intersections, Validate it.
     std::cout << "Generated Intersections and their Neighbors:\n";
     for (const auto& intersection : intersections) {
         const auto& pos = intersection.getPosition();
@@ -282,8 +280,6 @@ void Map::drawPellet(Vector3f pos) {
 }
 
 void Map::drawPower(Vector3f pos) {
-    //std::cout << "draw pow: ";
-    //pos.print();
     glMaterialfv(GL_FRONT, GL_EMISSION, mtl_power.getEmission().getPos());
     glMaterialfv(GL_FRONT, GL_AMBIENT, mtl_power.getAmbient().getPos());
     glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl_power.getDiffuse().getPos());
@@ -292,7 +288,7 @@ void Map::drawPower(Vector3f pos) {
     
     glPushMatrix();
     glTranslatef(pos[0], pos[1], pos[2] + Map::blockSize / 2.f);
-    glutSolidCube(Map::blockSize / 3);
+    glutSolidCube(Map::blockSize * 0.4f);
     glPopMatrix();
 }
 

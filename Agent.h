@@ -85,6 +85,7 @@ protected:
 	bool bisActive;
 	int activeCnt;
 	int respawnTick;
+	int scatterCnt;
 	DIRECTION navigator(Vector3f destination) const;
 	DIRECTION getOppositeDirection(DIRECTION dir) const;
 	void prevMoveHandler() override;
@@ -94,6 +95,7 @@ public:
 	static const int maxActiveCnt;
 	static const int maxRespawnTick = FPS_SET * 5;
 	static const int ghostActiveSec = 20;
+	void switchColorAtPow() const;
 
 	Ghost();
 	Ghost(int x, int y, int z);

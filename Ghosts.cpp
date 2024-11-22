@@ -44,8 +44,13 @@ void Blinky::updateVel() {
 void Blinky::draw() {
 	// draw
 	glMaterialfv(GL_FRONT, GL_EMISSION, mtl.getEmission().getPos());
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	if (::isPow) {
+		switchColorAtPow();
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	}
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mtl.getSpecular().getPos());
 	glMaterialfv(GL_FRONT, GL_SHININESS, mtl.getShininess());
 
@@ -131,8 +136,13 @@ void Pinky::updateVel() {
 void Pinky::draw() {
 	// draw
 	glMaterialfv(GL_FRONT, GL_EMISSION, mtl.getEmission().getPos());
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	if (::isPow) {
+		switchColorAtPow();
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	}
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mtl.getSpecular().getPos());
 	glMaterialfv(GL_FRONT, GL_SHININESS, mtl.getShininess());
 
@@ -220,8 +230,13 @@ void Inky::updateVel() {
 void Inky::draw() {
 	// draw
 	glMaterialfv(GL_FRONT, GL_EMISSION, mtl.getEmission().getPos());
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	if (::isPow) {
+		switchColorAtPow();
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	}
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mtl.getSpecular().getPos());
 	glMaterialfv(GL_FRONT, GL_SHININESS, mtl.getShininess());
 
@@ -287,8 +302,13 @@ void Clyde::updateVel() {
 void Clyde::draw() {
 	// draw
 	glMaterialfv(GL_FRONT, GL_EMISSION, mtl.getEmission().getPos());
-	glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	if (::isPow) {
+		switchColorAtPow();
+	}
+	else {
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mtl.getAmbient().getPos());
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mtl.getDiffuse().getPos());
+	}
 	glMaterialfv(GL_FRONT, GL_SPECULAR, mtl.getSpecular().getPos());
 	glMaterialfv(GL_FRONT, GL_SHININESS, mtl.getShininess());
 

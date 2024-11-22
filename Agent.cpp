@@ -110,21 +110,6 @@ void Pacman::updateVel() {
 		// Check if NextVel is valid
 		bool flag = false;
 		
-		/*
-		if (nextVel[0] > 0) {// Right
-			flag = (MAP_WIDTH - 1 != xi) && !map.W(xi + 1, yi);
-		}
-		else if (nextVel[0] < 0) {// Left
-			flag = (0 != xi) && !map.W(xi - 1, yi);
-		}
-		else if (nextVel[1] > 0) {// Up
-			flag = (MAP_HEIGHT != yi) && !map.W(xi, yi + 1);
-		}
-		else if (nextVel[1] < 0) {// Down
-			std::cout <<"map check" << !map.W(xi, yi - 1) << std::endl;
-			flag = (0 != yi) && !map.W(xi, yi - 1);
-		}*/
-
 		int x_next = xi + (int)nextVel[0]; int y_next = yi + (int)nextVel[1];
 		float xf = Agent::map2float(x_next, y_next)[0]; float yf = Agent::map2float(x_next, y_next)[1];
 		float dist = abs(xf - pos[0]) + abs(yf - pos[1]);
@@ -278,11 +263,13 @@ void Pacman::draw() {
 const int Ghost::maxActiveCnt = ::FPS * Ghost::ghostActiveSec;
 
 Ghost::Ghost() :
+	scatterCnt(0),
 	Agent(),
 	bisActive(true),
 	activeCnt(Ghost::maxActiveCnt) {}
 
 Ghost::Ghost(int x, int y, int z) :
+	scatterCnt(0),
 	Agent(x, y, z),
 	bisActive(true),
 	activeCnt(Ghost::maxActiveCnt) {}
@@ -307,7 +294,9 @@ Vector3f Agent::direction2vec(DIRECTION dir) {
 
 void Ghost::prevMoveHandler() {
 	if (::isPow) {// set Global isPow = fasle
-		// bla bla
+		if (++scatterCnt == 1024) {
+			scatterCnt = 0;
+		}
 	}
 	if (bisRespawn) {// Pacman에게 먹힌 경우
 		if (--respawnTick == 0) {// 감옥 탈출
@@ -353,13 +342,35 @@ void Ghost::move() {
 		}
 		pos[0] = pos[0] + vel[0] * VEL_SCALE; pos[1] = pos[1] + vel[1] * VEL_SCALE;
 	}
-	if(!bisRespawn) {
+	if (!bisRespawn) {
 		if (vel[0] == 0.f && vel[1] == 0.f) {
 			return;
 		}
-		pos[0] = pos[0] + vel[0] * VEL_SCALE; pos[1] = pos[1] + vel[1] * VEL_SCALE;
+		if (!::isPow) {// 팩맨이 파워 상태가 아닐 때, 일반 속도로 움직인다
+			pos[0] = pos[0] + vel[0] * VEL_SCALE; pos[1] = pos[1] + vel[1] * VEL_SCALE;
+		}
+		else if (::isPow) {// 팩맨이 파워 상태일 때, 고스트는 75% 감속에 걸린다.
+			pos[0] = pos[0] + vel[0] * VEL_SCALE * 0.25f; pos[1] = pos[1] + vel[1] * VEL_SCALE * 0.25f;
+		}
 	}
 	postMoveHandler();
+}
+
+void Ghost::switchColorAtPow() const{
+	if (scatterCnt % (8) < 4) {
+		// Blue color
+		GLfloat blueAmbient[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		GLfloat blueDiffuse[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+		glMaterialfv(GL_FRONT, GL_AMBIENT, blueAmbient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, blueDiffuse);
+	}
+	else {
+		// White color
+		GLfloat whiteAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		GLfloat whiteDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		glMaterialfv(GL_FRONT, GL_AMBIENT, whiteAmbient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, whiteDiffuse);
+	}
 }
 
 bool Ghost::isActive() const { return bisActive; }
