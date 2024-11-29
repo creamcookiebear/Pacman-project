@@ -51,6 +51,9 @@
     <ClCompile Include="SpecialCase.h">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ScoreBoard.h">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Map.h">
@@ -100,6 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="end.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
+    <Text Include="ScoreBoard.txt">
       <Filter>리소스 파일</Filter>
     </Text>
   </ItemGroup>

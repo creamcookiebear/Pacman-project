@@ -10,6 +10,7 @@
 #include "Constants.h"
 #include <string>
 #include <fstream>
+#include "ScoreBoard.h"
 
 using namespace std;
 
@@ -31,6 +32,11 @@ std::vector<Ghost*> ghosts;
 
 std::vector<std::string> lines;
 
+int numEnterName = 0;
+std::string playerName;
+
+ScoreManager manager("ScoreBoard.txt");
+
 enum class GAME_STATE {Normal, Respawn, GameOver, GameClear};
 
 GAME_STATE game_state = GAME_STATE::Normal;
@@ -50,7 +56,6 @@ bool bstart = true; // for debug
 Map map;
 
 Light light(BOUNDARY_X, BOUNDARY_Y, BOUNDARY_X / 2, GL_LIGHT0);
-//Texture texture("snu.png");
 
 void readFile(const char* filename) {
 	std::ifstream file(filename);
@@ -69,7 +74,7 @@ void readFile(const char* filename) {
 void initialize() {
 	map.MapInitializer("reflected_pacman_map.csv"); //load map
 	readFile("end.txt");
-
+	
 	// Light
 	light.setAmbient(0.5f, 0.5f, 0.5f, 1.0f);
 	light.setDiffuse(0.7f, 0.7f, 0.7f, 1.0f);
@@ -205,6 +210,13 @@ void idle() {
 	float frameDuration = 1000.0f / FPS; //  1000.0f / FPS
 	eTime = glutGet(GLUT_ELAPSED_TIME);
 
+	if (numEnterName == 1) {
+		numEnterName = 2;
+		std::cin >> playerName;
+		manager.addScore(playerName, pacman.getPoint());
+	}
+
+
 	if (eTime - sTime > frameDuration) {
 		/* Implement: update direction and move Agents */
 
@@ -219,7 +231,6 @@ void idle() {
 			// If Pacman is Not respawn (normal state)
 			if (!pacman.isRespawn()) {
 				if (pacman.isIndexPositionUpdated()) {
-					cout << "called update vel" << endl;
 					pacman.updateVel();
 				}
 				else {}
@@ -235,7 +246,6 @@ void idle() {
 			for (Ghost* ghost : ghosts) {
 				if (!ghost->isRespawn()) {
 					if ((ghost->isIndexPositionUpdated() || ghost->getVel() == Vector3f())) {
-						cout << "called update vel" << endl;
 						ghost->updateVel();
 					}
 					else {}
@@ -385,14 +395,14 @@ void display() {
 		// Bitmap draw
 		glColor3f(1.0, 1.0, 1.0); // White color
 
-		string text3 = "LIFES :";
+		string text3 = "LIFES : ";
 		string text4 = std::to_string(pacman.getLifes());
 		
-		displayText(-200.f, 200.0f, GLUT_BITMAP_TIMES_ROMAN_24, text3 + text4);
+		displayText(-250.f, 200.0f, GLUT_BITMAP_TIMES_ROMAN_24, text3 + text4);
 
-		string text1 = "SCORE :";
+		string text1 = "SCORE : ";
 		string text2 = std::to_string(pacman.getPoint());
-		displayText(-200.f, 150.0f, GLUT_BITMAP_TIMES_ROMAN_24, text1 + text2);
+		displayText(-245.f, 170.0f, GLUT_BITMAP_TIMES_ROMAN_24, text1 + text2);
 		break;
 	}
 
@@ -432,25 +442,35 @@ void display() {
 		break;
 		}
 	case (GAME_STATE::GameClear): {// Game Clear Screen
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y, -100.0, 100.0);
 
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
+		if (numEnterName == 0) {// Initial Name Save
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(-BOUNDARY_X, BOUNDARY_X, -BOUNDARY_Y, BOUNDARY_Y, -100.0, 100.0);
 
-		glColor3f(1.0, 1.0, 1.0); // White color
-		float y = 280.f; // 텍스트 출력 시작 위치 (y)
-		for (const auto& line : lines) {
-			displayBitmapText(-250.f, y, line.c_str()); // 각 줄을 출력
-			y -= 13.f; // 다음 줄로 이동
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+			glColor3f(1.0, 1.0, 1.0); // White color
+			float y = 280.f; // 텍스트 출력 시작 위치 (y)
+			for (const auto& line : lines) {
+				displayBitmapText(-250.f, y, line.c_str()); // 각 줄을 출력
+				y -= 13.f; // 다음 줄로 이동
+			}
+
+			string text1 = "SCORE : ";
+			string text2 = std::to_string(pacman.getPoint());
+			displayText(110.f, 150.0f, GLUT_BITMAP_TIMES_ROMAN_24, text1 + text2);
+			displayText(130.f, 90.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Merry");
+			displayText(110.f, 60.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Christmas!");
+
+			displayText(110.f, 0.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Enter Your name :");
+			numEnterName = 1;
 		}
-
-		string text1 = "SCORE : ";
-		string text2 = std::to_string(pacman.getPoint());
-		displayText(110.f, 150.0f, GLUT_BITMAP_TIMES_ROMAN_24, text1 + text2);
-		displayText(130.f, 90.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Merry");
-		displayText(110.f, 60.0f, GLUT_BITMAP_TIMES_ROMAN_24, "Christmas!");
+		else {
+			manager.displayScores();
+			manager.saveScores();
+		}
 		break;
 	}
 	}

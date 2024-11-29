@@ -99,12 +99,9 @@ Pacman::Pacman(int x, int y, int z) :
 void Pacman::updateVel() {
 	int xi = Agent::float2map(pos)[0];
 	int yi = Agent::float2map(pos)[1];
-	std::cout << "idxPos: " << xi << ", " << yi << std::endl;
 	if (nextVel[0] == 0.f && nextVel[1] == 0.f) {
-		std::cout << "no nextVel case" << std::endl;
 	}
 	else {
-		std::cout << "nextVel case" << std::endl;
 		// Check if NextVel is valid
 		bool flag = false;
 		
@@ -115,16 +112,11 @@ void Pacman::updateVel() {
 			flag = true;
 		}
 
-		std::cout << "flag: " << flag << std::endl;
 		if (flag) {// if next Velocity is legal move, update
-			std::cout << "Changed Vel" << std::endl;
 			vel = nextVel;
 			nextVel[0] = 0.f; nextVel[1] = 0.f;
 		}
 		// don't care of Vel before update.
-
-		std::cout << "discard nextVel. Illegal move";
-		std::cout << "\tat idxPos: " << idxPos[0] << ", " << idxPos[1] << std::endl;
 	}
 
 	// Check if curr Vel is Valid
@@ -133,7 +125,6 @@ void Pacman::updateVel() {
 	float dist = abs(xf - pos[0]) + abs(yf - pos[1]);
 	if (map.W(x_next, y_next) && (dist<(BLOCK_SIZE+VEL_SCALE*0.5f))&& (dist > (BLOCK_SIZE - VEL_SCALE * 0.5f))) {// If Wall
 		vel[0] = 0.f; vel[1] = 0.f; // Stop
-		std::cout << "stopped by wall col" << std::endl;
 	}
 
 	// else, Keep going

@@ -15,7 +15,6 @@ struct BFSNode {
 };
 
 DIRECTION Ghost::navigator(Vector3f destination) const {
-    PRINT("Called navigator at pos : "); PRINT_POS();
     DIRECTION currentDir;
 
     // Determine current direction based on vel
@@ -27,7 +26,6 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
 
     if (Agent::float2map(destination) == Agent::float2map(pos)) {
         // if at destination
-        PRINT("====================\nAt Destination\n=====================" << std::endl);
         std::map<DIRECTION, bool> ableDir;
         std::array<int, 2> tempIdx = { {Agent::float2map(pos)[0],Agent::float2map(pos)[1]} };
         ableDir[UP] = (Map::isInbound(tempIdx[0], tempIdx[1] + 1) && !map.W(tempIdx[0], tempIdx[1] + 1));
@@ -36,23 +34,15 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
         ableDir[LEFT] = (Map::isInbound(tempIdx[0] - 1, tempIdx[1]) && !map.W(tempIdx[0] - 1, tempIdx[1]));
         
         for (DIRECTION dir : std::array<DIRECTION,4>{{UP,DOWN,RIGHT,LEFT}}) {
-            PRINT(ableDir[dir] << std::endl;);
-            PRINT("dir : " << dir << std::endl);
             if (dir != Ghost::getOppositeDirection(currentDir) && ableDir[dir]) {
-                PRINT("Destination ducktape case, dir : " << dir << std::endl);
                 return dir;
             }
         }
-        PRINT("Error at escaping" << std::endl);
         return (DIRECTION)(currentDir);
     }
 
-    PRINT("Curr pos Intersection call :");
     Intersection currentIntersection = map.getClosestIntersection(pos);
-    PRINT("Dest pos Intersection call :");
     Intersection destinationIntersection = map.getClosestIntersection(destination);
-    PRINT("Destination Pos: ");
-    PRINT(destinationIntersection.getPosition()[0] << ", " << destinationIntersection.getPosition()[1] << std::endl);
 
     // Initialize the BFS queue
     DIRECTION initialCameFromDir = (currentDir != STAY && currentDir != NONE) ? getOppositeDirection(currentDir) : NONE;
@@ -92,7 +82,6 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
     }
 
     if (!found) {
-        PRINT("<<Critical Bug>> Path finding FAIL!"); PRINT_POS();
         return STAY;
     }
 
@@ -113,8 +102,6 @@ DIRECTION Ghost::navigator(Vector3f destination) const {
     if (directionVector[0] < 0) return LEFT;
     if (directionVector[1] > 0) return UP;
     if (directionVector[1] < 0) return DOWN;
-    PRINT("===========================\nError case!\n=========================\n");
-    PRINT("Direction match fail" << std::endl);
     return STAY;
 }
 
