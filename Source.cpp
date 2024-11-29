@@ -201,11 +201,12 @@ void idle() {
 		
 		sTime = eTime;
 		glutPostRedisplay();
+		/*
 		if (bstart) {
 			bstart = false;
 			string str;
 			cin >> str;
-		}
+		}*/
 	}
 }
 
@@ -323,7 +324,7 @@ int main(int argc, char** argv) {
 	// init GLUT and create Window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-	glutInitWindowPosition(WINDOW_X, WINDOW_Y);
+	glutInitWindowPosition(WINDOW_X, WINDOW_Y-150);
 	glutInitWindowSize(WINDOW_W, WINDOW_H);
 	glutCreateWindow("Move Pac-Man");
 
