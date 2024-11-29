@@ -142,6 +142,19 @@ void Pacman::updateVel() {
 int Pacman::getLifes() const {
 	return lifes;
 }
+
+void Pacman::decreaseLifes(void) {
+	lifes--;
+}
+
+int Pacman::getPoint() const {
+	return point;
+}
+
+void Pacman::increasePoint(int pt) {
+	point += pt;
+}
+
 int Pacman::getAnimationState() const {
 	return animationState;
 }
@@ -180,10 +193,12 @@ void Pacman::postMoveHandler() {
 	int xi = Agent::float2map(pos)[0]; int yi = Agent::float2map(pos)[1];
 	if (map.P(xi, yi)) {
 		point += 1;
+		EndCnt++;
 		map.sP(xi, yi, false);
 	}
 	if (map.Pow(xi, yi)) { // Check if at PowerPellet
-		point += 1;
+		point += 10;
+		EndCnt++;
 		map.sPow(xi, yi, false);
 		bisPow = true;
 		::isPow = true; // set Global isPow = true

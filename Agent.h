@@ -14,6 +14,9 @@ extern const int FPS;
 extern Vector3f pacPos;
 extern Vector3i pacVel;
 
+extern int EndCnt;
+extern const int MaxEndCnt;
+
 class Agent {
 protected:
 	Vector3f pos;
@@ -23,7 +26,6 @@ protected:
 	
 	bool bisPow;
 	int powerTick; // Powerup for 100 tick
-	bool bisRespawn;
 
 	bool directionCheck();
 	bool directionCheck(const Vector3f&, const Vector3f&) const;
@@ -59,6 +61,8 @@ public:
 	void setMTL(const Material& m);
 	virtual void move() = 0;
 	virtual void draw() = 0;
+
+	bool bisRespawn;
 };
 
 class Pacman : public Agent {
@@ -74,7 +78,10 @@ public:
 	Pacman(int x, int y, int z);
 	void updateVel() override;
 	int getLifes() const;
+	void decreaseLifes();
 	int getAnimationState() const;
+	int getPoint() const;
+	void increasePoint(int);
 	void setNextVel(DIRECTION);
 	void move() override;
 	void draw() override;
@@ -84,7 +91,6 @@ class Ghost : public Agent {
 protected:
 	bool bisActive;
 	int activeCnt;
-	int respawnTick;
 	int scatterCnt;
 	DIRECTION navigator(Vector3f destination) const;
 	DIRECTION getOppositeDirection(DIRECTION dir) const;
@@ -104,4 +110,6 @@ public:
 	bool isActive() const;
 	void move() override;
 	virtual void draw() override = 0;
+
+	int respawnTick;
 };

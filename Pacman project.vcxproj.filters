@@ -48,8 +48,8 @@
     <ClCompile Include="Shape3D.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="SpecialCase.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="SpecialCase.h">
+      <Filter>헤더 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,5 +97,10 @@
     <None Include="reflected_pacman_map.csv">
       <Filter>리소스 파일</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="end.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
   </ItemGroup>
 </Project>
